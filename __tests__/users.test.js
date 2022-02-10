@@ -20,4 +20,13 @@ describe('backend-12-OAuth routes', () => {
       /https:\/\/github.com\/login\/oauth\/authorize\?client_id=[\w\d]+&redirect_uri=http:\/\/localhost:7890\/api\/v1\/github\/login\/callback&scope=user/i
     );
   });
+
+  it('user logins in and is redirected to posts', async () => {
+    const req = await request
+      .agent(app)
+      .get('/api/v1/github/login/callback?code=69')
+      .redirects(1);
+
+    expect(req.body).toEqual([]);
+  });
 });
