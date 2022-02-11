@@ -30,7 +30,7 @@ describe('backend-12-OAuth routes', () => {
   });
 
   it('user logins in and is redirected to posts', async () => {
-    const agent = request(app);
+    const agent = request.agent(app);
     const req = await agent
       .get('/api/v1/github/login/callback?code=69')
       .redirects(1);
@@ -39,7 +39,7 @@ describe('backend-12-OAuth routes', () => {
   });
 
   it('user logins in and is redirected to posts, then creates a new post', async () => {
-    const agent = request(app);
+    const agent = request.agent(app);
     // login user, retrieve auth cookie
     await agent.get('/api/v1/github/login/callback?code=69').redirects(1);
 
