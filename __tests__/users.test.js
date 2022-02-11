@@ -4,6 +4,8 @@ const request = require('supertest');
 const app = require('../lib/app');
 const req = require('express/lib/request');
 
+jest.mock('../lib/utils/github.js');
+
 describe('backend-12-OAuth routes', () => {
   beforeEach(() => {
     return setup(pool);
@@ -22,8 +24,8 @@ describe('backend-12-OAuth routes', () => {
   });
 
   it('user logins in and is redirected to posts', async () => {
-    const req = await request
-      .agent(app)
+    const agent = request(app);
+    const req = await agent
       .get('/api/v1/github/login/callback?code=69')
       .redirects(1);
 
