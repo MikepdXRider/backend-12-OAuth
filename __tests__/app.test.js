@@ -4,7 +4,13 @@ const request = require('supertest');
 const app = require('../lib/app');
 const req = require('express/lib/request');
 
+// Mocks
 jest.mock('../lib/utils/github.js');
+const mockPost = {
+  title: 'mock-post-title',
+  description: 'This is a mock post description for testing.',
+  category: 'testing',
+};
 
 describe('backend-12-OAuth routes', () => {
   beforeEach(() => {
@@ -30,5 +36,23 @@ describe('backend-12-OAuth routes', () => {
       .redirects(1);
 
     expect(req.body).toEqual([]);
+  });
+
+  it('user logins in and is redirected to posts, then creates a new post', async () => {
+    const agent = request(app);
+    // login user, retrieve auth cookie
+    await agent.get('/api/v1/github/login/callback?code=69').redirects(1);
+
+    const postReq = await agent.post('/api/v1/posts').send(mockPost);
+    const actual = postReq.body;
+
+    const expected = {
+      ...mockPost,
+      id: expect.any(String),
+      userId: expect.any(String),
+      createdAt: expect.any(String),
+    };
+
+    expect(actual).toEqual(expected);
   });
 });
